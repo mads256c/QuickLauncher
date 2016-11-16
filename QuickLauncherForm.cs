@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Windows.Forms;
 using QuickLauncher.Properties;
-using System.Diagnostics;
 
 namespace QuickLauncher
 {
     public partial class QuickLauncherForm : Form
     {
 
-        int oldHeight = 0;
-        int maxHeight = 0;
+        private int oldHeight = 0;
+        private int maxHeight = 0;
         
-        private bool hidden = false;
+        internal bool hidden = false;
         public bool Hidden
         {
             get { return hidden; }
 
             set { if (hidden != value) {
                     hidden = value;
-                    stopTimer();
-                        if (!value)
-                        startTimer();
+                    timer.Stop();
+                    if (!value)
+                        timer.Start();
                     Height = oldHeight;
                 }
             }
         }
-       
 
+        #region key init
         Keys key1;
         Keys key2;
         Keys key3;
@@ -50,6 +49,7 @@ namespace QuickLauncher
         Keys keyf10;
 
         Keys keys;
+        #endregion
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
@@ -65,15 +65,6 @@ namespace QuickLauncher
             RegisterHotKey(this.Handle, id, 0, keys.GetHashCode());
         }
 
-        private void stopTimer()
-        {
-            timer.Stop();
-        }
-
-        private void startTimer()
-        {
-            timer.Start();
-        }
 
         private void startProcess(string path, string args)
         {
@@ -96,6 +87,8 @@ namespace QuickLauncher
                 Hide();
                 Hidden = true;
             }));
+
+            notifyIcon.Icon = Icon = Resources.icon;
 
             oldHeight = Height;
             maxHeight = Height * 2;
@@ -182,52 +175,57 @@ namespace QuickLauncher
 
         private void QuickLauncherForm_KeyDown(object sender, KeyEventArgs e)
         {
+
+
             if (e.KeyCode == key1)
                 startProcess(Settings.Default.Path1, Settings.Default.Arg1);
-            if (e.KeyCode == key2)
+            else if (e.KeyCode == key2)
                 startProcess(Settings.Default.Path2, Settings.Default.Arg2);
-            if (e.KeyCode == key3)
+            else if (e.KeyCode == key3)
                 startProcess(Settings.Default.Path3, Settings.Default.Arg3);
-            if (e.KeyCode == key4)
+            else if (e.KeyCode == key4)
                 startProcess(Settings.Default.Path4, Settings.Default.Arg4);
-            if (e.KeyCode == key5)
+            else if (e.KeyCode == key5)
                 startProcess(Settings.Default.Path5, Settings.Default.Arg5);
-            if (e.KeyCode == key6)
+            else if (e.KeyCode == key6)
                 startProcess(Settings.Default.Path6, Settings.Default.Arg6);
-            if (e.KeyCode == key7)
+            else if (e.KeyCode == key7)
                 startProcess(Settings.Default.Path7, Settings.Default.Arg7);
-            if (e.KeyCode == key8)
+            else if (e.KeyCode == key8)
                 startProcess(Settings.Default.Path8, Settings.Default.Arg8);
-            if (e.KeyCode == key9)
+            else if (e.KeyCode == key9)
                 startProcess(Settings.Default.Path9, Settings.Default.Arg9);
-            if (e.KeyCode == key10)
+            else if (e.KeyCode == key10)
                 startProcess(Settings.Default.Path10, Settings.Default.Arg10);
 
-            if (e.KeyCode == keyf1)
+            else if (e.KeyCode == keyf1)
                 startProcess(Settings.Default.Pathf1, Settings.Default.Argf1);
-            if (e.KeyCode == keyf2)
+            else if (e.KeyCode == keyf2)
                 startProcess(Settings.Default.Pathf2, Settings.Default.Argf2);
-            if (e.KeyCode == keyf3)
+            else if (e.KeyCode == keyf3)
                 startProcess(Settings.Default.Pathf3, Settings.Default.Argf3);
-            if (e.KeyCode == keyf4)
+            else if (e.KeyCode == keyf4)
                 startProcess(Settings.Default.Pathf4, Settings.Default.Argf4);
-            if (e.KeyCode == keyf5)
+            else if (e.KeyCode == keyf5)
                 startProcess(Settings.Default.Pathf5, Settings.Default.Argf5);
-            if (e.KeyCode == keyf6)
+            else if (e.KeyCode == keyf6)
                 startProcess(Settings.Default.Pathf6, Settings.Default.Argf6);
-            if (e.KeyCode == keyf7)
+            else if (e.KeyCode == keyf7)
                 startProcess(Settings.Default.Pathf7, Settings.Default.Argf7);
-            if (e.KeyCode == keyf8)
+            else if (e.KeyCode == keyf8)
                 startProcess(Settings.Default.Pathf8, Settings.Default.Argf8);
-            if (e.KeyCode == keyf9)
+            else if (e.KeyCode == keyf9)
                 startProcess(Settings.Default.Pathf9, Settings.Default.Argf9);
-            if (e.KeyCode == keyf10)
+            else if (e.KeyCode == keyf10)
                 startProcess(Settings.Default.Pathf10, Settings.Default.Argf10);
 
             if (e.KeyCode == Keys.Space)
             {
                 animTimer.Stop();
                 animTimer.Start();
+
+                timer.Stop();
+                timer.Start();
             }
                 
         }
@@ -282,12 +280,6 @@ namespace QuickLauncher
             Hidden = false;
         }
 
-        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            Show();
-            Hidden = false;
-        }
-
         private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -304,14 +296,9 @@ namespace QuickLauncher
         private void amimTimer_Tick(object sender, EventArgs e)
         {
             if (Height >= maxHeight)
-            {
                 animTimer.Stop();
-
-            }
-
-            Height += 5;
+            else
+                Height += 5;
         }
     }
-
-    
 }
